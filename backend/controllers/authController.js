@@ -10,8 +10,8 @@ const generateToken = (res, userId) => {
 
     res.cookie("token", token, {
         httpOnly: true,
-        secure: false, // true in production (HTTPS)
-        sameSite: "strict",
+        secure: true, // true in production (HTTPS)
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 };
@@ -76,10 +76,14 @@ exports.loginUser = async(req, res) => {
 exports.logoutUser = (req, res) => {
     res.cookie("token", "", {
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
         expires: new Date(0),
     });
+
     res.json({ message: "Logged out successfully" });
 };
+
 
 // GET CURRENT USER
 exports.getMe = async(req, res) => {
