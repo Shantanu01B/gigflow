@@ -12,55 +12,50 @@ const app = express();
 // 🔗 Connect DB
 connectDB();
 
-// ✅ CORS MUST BE FIRST
-const allowedOrigins = [
-    "http://localhost:5173",
-    "https://gigflow-wine.vercel.app", // ✅ MAIN VERCEL DOMAIN
-];
-
+// ======================
+// ✅ CORS (FIXED & SAFE)
+// ======================
 app.use(
     cors({
-        origin: function(origin, callback) {
-            if (!origin) return callback(null, true);
-            if (allowedOrigins.includes(origin)) {
-                callback(null, true);
-            } else {
-                callback(new Error("Not allowed by CORS"));
-            }
-        },
+        origin: "https://gigflow-wine.vercel.app", // ✅ ONLY frontend
         credentials: true,
     })
 );
 
-
-// ✅ THEN parsers
+// ======================
+// ✅ MIDDLEWARES
+// ======================
 app.use(express.json());
 app.use(cookieParser());
 
-// 📦 Routes
+// ======================
+// ✅ ROUTES
+// ======================
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/gigs", require("./routes/gigRoutes"));
 app.use("/api/bids", require("./routes/bidRoutes"));
 
-// 🌐 HTTP server
+// ======================
+// ✅ HTTP SERVER
+// ======================
 const server = http.createServer(app);
 
-// 🔌 Socket.io
+// ======================
+// ✅ SOCKET.IO (MATCH CORS)
+// ======================
 const io = new Server(server, {
     cors: {
-        origin: allowedOrigins,
+        origin: "https://gigflow-wine.vercel.app",
         credentials: true,
     },
 });
 
-
-// 🔔 Socket events
 io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
 
     socket.on("joinGig", (gigId) => {
         socket.join(gigId);
-        console.log(`Joined gig room: ${gigId}`);
+        console.log("Joined gig:", gigId);
     });
 
     socket.on("disconnect", () => {
@@ -68,10 +63,12 @@ io.on("connection", (socket) => {
     });
 });
 
-// 🔑 Make io available to controllers
+// 🔑 Make io accessible
 app.set("io", io);
 
-// 🚀 Start server
+// ======================
+// 🚀 START SERVER
+// ======================
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

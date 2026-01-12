@@ -10,11 +10,13 @@ const generateToken = (res, userId) => {
 
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true, // true in production (HTTPS)
-        sameSite: "none",
+        secure: true, // REQUIRED for HTTPS
+        sameSite: "none", // REQUIRED for cross-domain
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/", // 🔥 REQUIRED
     });
 };
+
 
 // REGISTER
 exports.registerUser = async(req, res) => {
