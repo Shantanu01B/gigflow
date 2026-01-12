@@ -18,10 +18,14 @@ app.use(cookieParser());
 
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: [
+            "http://localhost:5173",
+            "https://gigflow-w9hn-fcsbac20p-shantanus-projects.vercel.app",
+        ],
         credentials: true,
     })
 );
+
 
 // 📦 Routes
 app.use("/api/auth", require("./routes/authRoutes"));
@@ -34,10 +38,14 @@ const server = http.createServer(app);
 // 🔌 Setup Socket.io
 const io = new Server(server, {
     cors: {
-        origin: "https://gigflow-wine.vercel.app",
+        origin: [
+            "http://localhost:5173",
+            "https://gigflow-w9hn-fcsbac20p-shantanus-projects.vercel.app",
+        ],
         credentials: true,
     },
 });
+
 
 // 🔔 Socket connection logic
 io.on("connection", (socket) => {
