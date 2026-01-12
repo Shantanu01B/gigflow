@@ -10,12 +10,13 @@ const generateToken = (res, userId) => {
 
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true, // REQUIRED for HTTPS
-        sameSite: "none", // REQUIRED for cross-domain
+        secure: true, // REQUIRED (HTTPS)
+        sameSite: "None", // MUST be capital N
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: "/", // 🔥 REQUIRED
+        path: "/", // REQUIRED
     });
 };
+
 
 
 // REGISTER
