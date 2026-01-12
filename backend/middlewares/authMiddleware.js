@@ -3,7 +3,7 @@ const User = require("../models/User");
 
 const protect = async(req, res, next) => {
     try {
-        const token = req.cookies ? .token;
+        const token = req.cookies && req.cookies.token;
 
         if (!token) {
             return res.status(401).json({ message: "Not authorized, no token" });
@@ -12,7 +12,6 @@ const protect = async(req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         const user = await User.findById(decoded.userId).select("-password");
-
         if (!user) {
             return res.status(401).json({ message: "User not found" });
         }
@@ -20,8 +19,8 @@ const protect = async(req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.error("AUTH MIDDLEWARE ERROR:", error.message);
-        return res.status(401).json({ message: "Not authorized" });
+        console.error("AUTH ERROR:", error);
+        res.status(401).json({ message: "Invalid token" });
     }
 };
 
