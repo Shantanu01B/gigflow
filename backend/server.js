@@ -13,15 +13,25 @@ const app = express();
 connectDB();
 
 // ✅ CORS MUST BE FIRST
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://gigflow-wine.vercel.app", // ✅ MAIN VERCEL DOMAIN
+];
+
 app.use(
     cors({
-        origin: [
-            "http://localhost:5173",
-            "https://gigflow-w9hn-l9r5ov8ai-shantanus-projects-17a0aacd.vercel.app",
-        ],
+        origin: function(origin, callback) {
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         credentials: true,
     })
 );
+
 
 // ✅ THEN parsers
 app.use(express.json());
@@ -38,13 +48,11 @@ const server = http.createServer(app);
 // 🔌 Socket.io
 const io = new Server(server, {
     cors: {
-        origin: [
-            "http://localhost:5173",
-            "https://gigflow-w9hn-l9r5ov8ai-shantanus-projects-17a0aacd.vercel.app",
-        ],
+        origin: allowedOrigins,
         credentials: true,
     },
 });
+
 
 // 🔔 Socket events
 io.on("connection", (socket) => {
