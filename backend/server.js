@@ -9,51 +9,50 @@ const connectDB = require("./config/db");
 
 const app = express();
 
-// 🔗 Database
+// 🔗 Connect DB
 connectDB();
 
-// 🔧 Middlewares
-app.use(express.json());
-app.use(cookieParser());
-
+// ✅ CORS MUST BE FIRST
 app.use(
     cors({
         origin: [
             "http://localhost:5173",
-            "https://gigflow-w9hn-fcsbac20p-shantanus-projects.vercel.app",
+            "https://gigflow-w9hn-l9r5ov8ai-shantanus-projects-17a0aacd.vercel.app",
         ],
         credentials: true,
     })
 );
 
+// ✅ THEN parsers
+app.use(express.json());
+app.use(cookieParser());
 
 // 📦 Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/gigs", require("./routes/gigRoutes"));
 app.use("/api/bids", require("./routes/bidRoutes"));
 
-// 🌐 Create HTTP server
+// 🌐 HTTP server
 const server = http.createServer(app);
 
-// 🔌 Setup Socket.io
+// 🔌 Socket.io
 const io = new Server(server, {
     cors: {
         origin: [
             "http://localhost:5173",
-            "https://gigflow-w9hn-fcsbac20p-shantanus-projects.vercel.app",
+            "https://gigflow-w9hn-l9r5ov8ai-shantanus-projects-17a0aacd.vercel.app",
         ],
         credentials: true,
     },
 });
 
-
-// 🔔 Socket connection logic
+// 🔔 Socket events
 io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
 
     socket.on("joinGig", (gigId) => {
         socket.join(gigId);
-        console.log(`Socket joined gig room: ${gigId}`);
+        console.log(`Joined gig room: ${gigId}`);
     });
 
     socket.on("disconnect", () => {
@@ -61,7 +60,7 @@ io.on("connection", (socket) => {
     });
 });
 
-// 🔑 Make io accessible in controllers
+// 🔑 Make io available to controllers
 app.set("io", io);
 
 // 🚀 Start server
