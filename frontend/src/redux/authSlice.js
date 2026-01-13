@@ -1,26 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../services/api";
 
-/* REGISTER */
-export const registerUser = createAsyncThunk(
-    "auth/register",
-    async(data, { rejectWithValue }) => {
-        try {
-            const res = await api.post("/auth/register", data);
-            return res.data;
-        } catch (err) {
-            return rejectWithValue(
-                err.response &&
-                err.response.data &&
-                err.response.data.message ?
-                err.response.data.message :
-                "Register failed"
-            );
-        }
-    }
-);
-
-
 /* LOGIN */
 export const loginUser = createAsyncThunk(
     "auth/login",
@@ -29,14 +9,11 @@ export const loginUser = createAsyncThunk(
             const res = await api.post("/auth/login", data);
             return res.data;
         } catch (err) {
-            return rejectWithValue(
-                err.response &&
-                err.response.data &&
-                err.response.data.message ?
-                err.response.data.message :
-                "Login failed"
-            );
-
+            let message = "Login failed";
+            if (err.response && err.response.data && err.response.data.message) {
+                message = err.response.data.message;
+            }
+            return rejectWithValue(message);
         }
     }
 );
@@ -56,27 +33,50 @@ export const fetchMe = createAsyncThunk(
 
 /* LOGOUT */
 export const logoutUser = createAsyncThunk("auth/logout", async() => {
-    await api.post("/auth/logout");
+    localStorage.removeItem("token");
 });
 
 const authSlice = createSlice({
     name: "auth",
-    initialState: { user: null },
+    initialState: {
+        user: null,
+        token: localStorage.getItem("token"),
+    },
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(registerUser.fulfilled, (state, action) => {
-                state.user = action.payload;
-            })
+
+        // LOGIN SUCCESS
             .addCase(loginUser.fulfilled, (state, action) => {
-                state.user = action.payload;
-            })
-            .addCase(fetchMe.fulfilled, (state, action) => {
-                state.user = action.payload;
-            })
-            .addCase(logoutUser.fulfilled, (state) => {
-                state.user = null;
-            });
+            var payload = action.payload;
+            var token = null;
+            var user = null;
+
+            if (payload && payload.token) {
+                token = payload.token;
+                user = payload.user ? payload.user : payload;
+            } else {
+                user = payload;
+            }
+
+            if (token) {
+                localStorage.setItem("token", token);
+                state.token = token;
+            }
+
+            state.user = user;
+        })
+
+        // FETCH ME SUCCESS
+        .addCase(fetchMe.fulfilled, (state, action) => {
+            state.user = action.payload;
+        })
+
+        // LOGOUT
+        .addCase(logoutUser.fulfilled, (state) => {
+            state.user = null;
+            state.token = null;
+        });
     },
 });
 
