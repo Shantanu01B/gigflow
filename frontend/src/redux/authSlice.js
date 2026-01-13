@@ -100,4 +100,7 @@ const authSlice = createSlice({
     },
 });
 
+// 👇 FORCE named exports for Vite/Rollup
+export { registerUser, loginUser, fetchMe, logoutUser };
+
 export default authSlice.reducer;
