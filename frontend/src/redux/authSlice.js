@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../services/api";
 
-
 /* REGISTER */
 export const registerUser = createAsyncThunk(
     "auth/register",
@@ -64,22 +63,20 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
 
+        // REGISTER
             .addCase(registerUser.fulfilled, (state, action) => {
             state.user = action.payload;
         })
 
-
-        // LOGIN SUCCESS
+        // LOGIN
         .addCase(loginUser.fulfilled, (state, action) => {
             var payload = action.payload;
             var token = null;
-            var user = null;
+            var user = payload;
 
             if (payload && payload.token) {
                 token = payload.token;
                 user = payload.user ? payload.user : payload;
-            } else {
-                user = payload;
             }
 
             if (token) {
@@ -90,7 +87,7 @@ const authSlice = createSlice({
             state.user = user;
         })
 
-        // FETCH ME SUCCESS
+        // FETCH ME
         .addCase(fetchMe.fulfilled, (state, action) => {
             state.user = action.payload;
         })
