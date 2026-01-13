@@ -13,11 +13,23 @@ const app = express();
 connectDB();
 
 // ======================
-// ✅ CORS (FIXED & SAFE)
+// ✅ CORS (PRODUCTION SAFE)
 // ======================
+const allowedOrigins = [
+    "https://gigflow-cyan.vercel.app",
+    "https://gigflow-wine.vercel.app",
+    "http://localhost:5173",
+];
+
 app.use(
     cors({
-        origin: "https://gigflow-wine.vercel.app", // ✅ ONLY frontend
+        origin: function(origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         credentials: true,
     })
 );
@@ -45,7 +57,7 @@ const server = http.createServer(app);
 // ======================
 const io = new Server(server, {
     cors: {
-        origin: "https://gigflow-wine.vercel.app",
+        origin: allowedOrigins,
         credentials: true,
     },
 });
@@ -63,7 +75,7 @@ io.on("connection", (socket) => {
     });
 });
 
-// 🔑 Make io accessible
+// 🔑 Make io accessible in routes
 app.set("io", io);
 
 // ======================
