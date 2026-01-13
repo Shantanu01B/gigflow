@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../redux/authSlice";
+import authActions from "../redux/authSlice"; // ✅ UPDATED
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -22,13 +22,13 @@ export default function Register() {
   useEffect(() => {
     if (user) {
       toast.success("Already logged in!", {
-        icon: '👋',
+        icon: "👋",
         style: {
-          background: '#10B981',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#10B981",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       navigate("/");
     }
@@ -41,11 +41,11 @@ export default function Register() {
     if (!name || !email || !password || !confirmPassword) {
       toast.error("Please fill in all fields", {
         style: {
-          background: '#EF4444',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#EF4444",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       return;
     }
@@ -53,11 +53,11 @@ export default function Register() {
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters", {
         style: {
-          background: '#EF4444',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#EF4444",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       return;
     }
@@ -65,11 +65,11 @@ export default function Register() {
     if (password !== confirmPassword) {
       toast.error("Passwords do not match", {
         style: {
-          background: '#EF4444',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#EF4444",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       return;
     }
@@ -77,26 +77,26 @@ export default function Register() {
     setLoading(true);
     const toastId = toast.loading("Creating your account...", {
       style: {
-        background: '#1F2937',
-        color: '#F9FAFB',
-        border: '1px solid #374151',
-        borderRadius: '12px',
-      }
+        background: "#1F2937",
+        color: "#F9FAFB",
+        border: "1px solid #374151",
+        borderRadius: "12px",
+      },
     });
 
     try {
       const result = await dispatch(
-        registerUser({ name, email, password, userType })
+        authActions.registerUser({ name, email, password, userType }) // ✅ UPDATED
       );
 
-      if (registerUser.fulfilled.match(result)) {
+      if (authActions.registerUser.fulfilled.match(result)) {
         toast.dismiss(toastId);
         toast.success("Account created successfully! 🎉", {
           style: {
-            background: '#10B981',
-            color: '#FFFFFF',
-            borderRadius: '12px',
-            fontWeight: '600',
+            background: "#10B981",
+            color: "#FFFFFF",
+            borderRadius: "12px",
+            fontWeight: "600",
           },
           duration: 2000,
         });
@@ -105,11 +105,11 @@ export default function Register() {
         toast.dismiss(toastId);
         toast.error(result.payload || "Registration failed", {
           style: {
-            background: '#EF4444',
-            color: '#FFFFFF',
-            borderRadius: '12px',
-            fontWeight: '600',
-          }
+            background: "#EF4444",
+            color: "#FFFFFF",
+            borderRadius: "12px",
+            fontWeight: "600",
+          },
         });
         setError(result.payload || "Registration failed");
       }
@@ -117,11 +117,11 @@ export default function Register() {
       toast.dismiss(toastId);
       toast.error("Something went wrong. Please try again.", {
         style: {
-          background: '#EF4444',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#EF4444",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       setError("Something went wrong");
     } finally {

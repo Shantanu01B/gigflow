@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/authSlice";
+import authActions from "../redux/authSlice"; // ✅ UPDATED
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -19,13 +19,13 @@ export default function Login() {
   useEffect(() => {
     if (user) {
       toast.success("Already logged in!", {
-        icon: '👋',
+        icon: "👋",
         style: {
-          background: '#10B981',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#10B981",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       navigate("/");
     }
@@ -38,11 +38,11 @@ export default function Login() {
     if (!email || !password) {
       toast.error("Please fill in all fields", {
         style: {
-          background: '#EF4444',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#EF4444",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       return;
     }
@@ -50,24 +50,26 @@ export default function Login() {
     setLoading(true);
     const toastId = toast.loading("Authenticating...", {
       style: {
-        background: '#1F2937',
-        color: '#F9FAFB',
-        border: '1px solid #374151',
-        borderRadius: '12px',
-      }
+        background: "#1F2937",
+        color: "#F9FAFB",
+        border: "1px solid #374151",
+        borderRadius: "12px",
+      },
     });
 
     try {
-      const result = await dispatch(loginUser({ email, password }));
+      const result = await dispatch(
+        authActions.loginUser({ email, password }) // ✅ UPDATED
+      );
 
-      if (loginUser.fulfilled.match(result)) {
+      if (authActions.loginUser.fulfilled.match(result)) {
         toast.dismiss(toastId);
         toast.success("Welcome back! 🎉", {
           style: {
-            background: '#10B981',
-            color: '#FFFFFF',
-            borderRadius: '12px',
-            fontWeight: '600',
+            background: "#10B981",
+            color: "#FFFFFF",
+            borderRadius: "12px",
+            fontWeight: "600",
           },
           duration: 2000,
         });
@@ -76,11 +78,11 @@ export default function Login() {
         toast.dismiss(toastId);
         toast.error(result.payload || "Invalid credentials", {
           style: {
-            background: '#EF4444',
-            color: '#FFFFFF',
-            borderRadius: '12px',
-            fontWeight: '600',
-          }
+            background: "#EF4444",
+            color: "#FFFFFF",
+            borderRadius: "12px",
+            fontWeight: "600",
+          },
         });
         setError(result.payload || "Invalid credentials");
       }
@@ -88,11 +90,11 @@ export default function Login() {
       toast.dismiss(toastId);
       toast.error("Something went wrong. Please try again.", {
         style: {
-          background: '#EF4444',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#EF4444",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
       setError("Something went wrong");
     } finally {
@@ -101,33 +103,32 @@ export default function Login() {
   };
 
   const fillDemoCredentials = (type) => {
-    if (type === 'client') {
+    if (type === "client") {
       setEmail("admin@gmail.com");
       setPassword("admin123");
       toast.success("Client credentials filled!", {
-        icon: '👔',
+        icon: "👔",
         style: {
-          background: '#3B82F6',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#3B82F6",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
     } else {
       setEmail("user@gmail.com");
       setPassword("user123");
       toast.success("Freelancer credentials filled!", {
-        icon: '💼',
+        icon: "💼",
         style: {
-          background: '#8B5CF6',
-          color: '#FFFFFF',
-          borderRadius: '12px',
-          fontWeight: '600',
-        }
+          background: "#8B5CF6",
+          color: "#FFFFFF",
+          borderRadius: "12px",
+          fontWeight: "600",
+        },
       });
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
       {/* Animated Background Elements */}

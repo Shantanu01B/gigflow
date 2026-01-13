@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../services/api";
 
 /* REGISTER */
-export const registerUser = createAsyncThunk(
+const registerUser = createAsyncThunk(
     "auth/register",
     async(data, { rejectWithValue }) => {
         try {
@@ -19,7 +19,7 @@ export const registerUser = createAsyncThunk(
 );
 
 /* LOGIN */
-export const loginUser = createAsyncThunk(
+const loginUser = createAsyncThunk(
     "auth/login",
     async(data, { rejectWithValue }) => {
         try {
@@ -36,7 +36,7 @@ export const loginUser = createAsyncThunk(
 );
 
 /* FETCH CURRENT USER */
-export const fetchMe = createAsyncThunk(
+const fetchMe = createAsyncThunk(
     "auth/me",
     async(_, { rejectWithValue }) => {
         try {
@@ -49,7 +49,7 @@ export const fetchMe = createAsyncThunk(
 );
 
 /* LOGOUT */
-export const logoutUser = createAsyncThunk("auth/logout", async() => {
+const logoutUser = createAsyncThunk("auth/logout", async() => {
     localStorage.removeItem("token");
 });
 
@@ -62,45 +62,43 @@ const authSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-
-        // REGISTER
             .addCase(registerUser.fulfilled, (state, action) => {
-            state.user = action.payload;
-        })
+                state.user = action.payload;
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                const payload = action.payload;
+                let token = null;
+                let user = payload;
 
-        // LOGIN
-        .addCase(loginUser.fulfilled, (state, action) => {
-            const payload = action.payload;
-            let token = null;
-            let user = payload;
+                if (payload && payload.token) {
+                    token = payload.token;
+                    if (payload.user) user = payload.user;
+                }
 
-            if (payload && payload.token) {
-                token = payload.token;
-                if (payload.user) user = payload.user;
-            }
+                if (token) {
+                    localStorage.setItem("token", token);
+                    state.token = token;
+                }
 
-            if (token) {
-                localStorage.setItem("token", token);
-                state.token = token;
-            }
-
-            state.user = user;
-        })
-
-        // FETCH ME
-        .addCase(fetchMe.fulfilled, (state, action) => {
-            state.user = action.payload;
-        })
-
-        // LOGOUT
-        .addCase(logoutUser.fulfilled, (state) => {
-            state.user = null;
-            state.token = null;
-        });
+                state.user = user;
+            })
+            .addCase(fetchMe.fulfilled, (state, action) => {
+                state.user = action.payload;
+            })
+            .addCase(logoutUser.fulfilled, (state) => {
+                state.user = null;
+                state.token = null;
+            });
     },
 });
 
-// 👇 FORCE named exports for Vite/Rollup
-export { registerUser, loginUser, fetchMe, logoutUser };
+/* ✅ DEFAULT EXPORT OBJECT (NO NAMED EXPORTS) */
+const authActions = {
+    registerUser,
+    loginUser,
+    fetchMe,
+    logoutUser,
+    reducer: authSlice.reducer,
+};
 
-export default authSlice.reducer;
+export default authActions;
