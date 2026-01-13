@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authActions from "./redux/authSlice";
+import authActions from "./authSlice"; // ✅ FIXED PATH
 
 export const store = configureStore({
     reducer: {

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logoutUser } from "../redux/authSlice";
+import authActions from "../redux/authSlice"; // ✅ FIXED
 import toast from "react-hot-toast";
 
 export default function Navbar() {
@@ -23,8 +23,8 @@ export default function Navbar() {
       // Small delay for better UX
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Clear the Redux state and storage
-      await dispatch(logoutUser());
+      // ✅ FIXED: use authActions
+      await dispatch(authActions.logoutUser());
       
       // Update toast to success
       toast.dismiss(toastId);
@@ -65,10 +65,8 @@ export default function Navbar() {
           to="/" 
           className="flex items-center gap-3 group relative overflow-hidden py-1"
         >
-          {/* Animated background effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/10 to-indigo-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           
-          {/* Logo Icon with glow */}
           <div className="relative z-10">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
               <span className="drop-shadow-md">G</span>
@@ -76,7 +74,6 @@ export default function Navbar() {
             <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
           </div>
           
-          {/* Logo Text */}
           <div className="relative z-10">
             <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
               Gig<span className="text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text">Flow</span>
@@ -87,23 +84,13 @@ export default function Navbar() {
 
         {/* NAVIGATION LINKS */}
         <div className="flex items-center gap-3">
-          
           {!user ? (
             <div className="flex items-center gap-3">
-              <Link 
-                to="/login" 
-                className="relative px-5 py-2.5 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-colors group"
-              >
-                <span className="relative z-10">Login</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 to-purple-500/0 rounded-xl group-hover:from-indigo-500/10 group-hover:to-purple-500/10 transition-all duration-300"></div>
+              <Link to="/login" className="relative px-5 py-2.5 rounded-xl text-sm font-bold text-gray-300 hover:text-white">
+                Login
               </Link>
-              <Link 
-                to="/register" 
-                className="relative px-6 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-xl hover:shadow-indigo-500/25 hover:scale-[1.02] transition-all duration-300 group overflow-hidden"
-              >
-                <span className="relative z-10">Join Free</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
+              <Link to="/register" className="relative px-6 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                Join Free
               </Link>
             </div>
           ) : (
