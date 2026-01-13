@@ -4,7 +4,7 @@
 
 Built as part of a **Full Stack Development Internship Assignment.**
 
-[🚀 Live Demo](#) | [🐞 Report Bug](https://github.com/yourusername/gigflow/issues) | [💡 Request Feature](https://github.com/yourusername/gigflow/issues)
+
 
 ---
 
