@@ -70,13 +70,13 @@ const authSlice = createSlice({
 
         // LOGIN
         .addCase(loginUser.fulfilled, (state, action) => {
-            var payload = action.payload;
-            var token = null;
-            var user = payload;
+            const payload = action.payload;
+            let token = null;
+            let user = payload;
 
             if (payload && payload.token) {
                 token = payload.token;
-                user = payload.user ? payload.user : payload;
+                if (payload.user) user = payload.user;
             }
 
             if (token) {
