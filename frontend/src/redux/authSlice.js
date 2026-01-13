@@ -1,6 +1,24 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../services/api";
 
+
+/* REGISTER */
+export const registerUser = createAsyncThunk(
+    "auth/register",
+    async(data, { rejectWithValue }) => {
+        try {
+            const res = await api.post("/auth/register", data);
+            return res.data;
+        } catch (err) {
+            let message = "Register failed";
+            if (err.response && err.response.data && err.response.data.message) {
+                message = err.response.data.message;
+            }
+            return rejectWithValue(message);
+        }
+    }
+);
+
 /* LOGIN */
 export const loginUser = createAsyncThunk(
     "auth/login",
@@ -46,8 +64,13 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
 
+            .addCase(registerUser.fulfilled, (state, action) => {
+            state.user = action.payload;
+        })
+
+
         // LOGIN SUCCESS
-            .addCase(loginUser.fulfilled, (state, action) => {
+        .addCase(loginUser.fulfilled, (state, action) => {
             var payload = action.payload;
             var token = null;
             var user = null;
